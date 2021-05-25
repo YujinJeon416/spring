@@ -21,10 +21,10 @@ public class Stopwatch {
 
 	@Around("pointcut()")   
 	public Object aroundAdvice(ProceedingJoinPoint joinPoint) throws Throwable{
-		StopWatch stopwatch = new StopWatch();    // spring stopwatch 객체 생성
-		stopwatch.start();                        // 시작
+		StopWatch stopwatch = new StopWatch();   
+		stopwatch.start();                      
 		
-		Object obj = joinPoint.proceed();         //업무 실행
+		Object obj = joinPoint.proceed();         
 		
 		stopwatch.stop();                         
 		log.info("소요시간: {}", stopwatch.getTotalTimeMillis() + "ms"); 
