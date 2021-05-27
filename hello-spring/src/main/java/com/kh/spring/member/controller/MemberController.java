@@ -244,6 +244,33 @@ public class MemberController {
 		return mav;
 	}
 	
+	/**
+	 * spring ajax(json)
+	 * 1. gson - 응답메세지에 json문자열을 직접 출력
+	 * 2. jsonView빈을 통해 처리하기 - model에 담긴 데이터를 json으로 변환, 응답에 출력
+	 * 3. @ResponseBody - 리턴된 자바객체를 json으로 변환, 응답에 출력
+	 * 4. ResponseEntity<Map<String, Object>>
+	 * 
+	 * 
+	 * jsonView방식
+	 * 
+	 * @param id
+	 * @return
+	 */
+	@GetMapping("/checkIdDuplicate1.do")
+	public String checkIdDuplicate1(@RequestParam String id, Model model) {
+		//1. 업무로직
+		Member member = memberService.selectOneMember(id);
+		boolean available = member == null;
+		//2. Model에 속성 저장
+		model.addAttribute("available", available);
+		model.addAttribute("id", id);
+		
+		return "jsonView";
+	}
+	
+	
+	
 }
 
 

@@ -1,15 +1,15 @@
---=====================================
---관리자 계정
---=====================================
-create user spring 
+--===============================
+-- 관리자 계정
+--===============================
+create user spring
 identified by spring
 default tablespace users;
 
 grant connect, resource to spring;
 
---=====================================
---spring 계정
---=====================================
+--===============================
+-- spring 계정
+--===============================
 
 create table dev(
     no number,
@@ -24,44 +24,58 @@ create table dev(
 
 create sequence seq_dev_no;
 
-select * from dev;
+select
+    *
+from
+    dev;
+    
 
 --회원테이블 관련
 create table member(
-		id varchar2(15),
-		password varchar2(300) not null,
-		name varchar2(256) not null,
-		gender char(1),
-		birthday date,
-		email varchar2(256),
-		phone char(11) not null,
-		address varchar2(512),
-		hobby varchar2(256),
-		enroll_date date default sysdate, 
-		enabled number default 1,               --활성화여부 1(활성화), 0(비활성화)
-		constraint pk_member_id primary key(id),
-		constraint ck_member_gender check(gender in ('M', 'F')),
-		constraint ck_member_enabled check(enabled in (1,0))
-	);
-	insert into spring.member values ('abcde','1234','아무개','M',to_date('88-01-25','rr-mm-dd'),'abcde@naver.com','01012345678','서울시 강남구','운동,등산,독서',default,default);
-	insert into spring.member values ('qwerty','1234','김말년','F',to_date('78-02-25','rr-mm-dd'),'qwerty@naver.com','01098765432','서울시 관악구','운동,등산',default,default);
-	insert into spring.member values ('admin','1234','관리자','F',to_date('90-12-25','rr-mm-dd'),'admin@naver.com','01012345678','서울시 강남구','독서',default,default);
-	commit;
-	select
-		*
-	from
-		member;
-        
-        update
-        member
-        set
-        password='$2a$10$MeKZsAhCFRUelA47NJjmWO/MKOhrNAONXv5O8bAsQyV3Gyr9JlD7G'
-        where
-        id='admin';
-        
-        commit;
-        
---memo테이블 생성
+    id varchar2(15),
+    password varchar2(300) not null,
+    name varchar2(256) not null,
+    gender char(1),
+    birthday date,
+    email varchar2(256),
+    phone char(11) not null,
+    address varchar2(512),
+    hobby varchar2(256),
+    enroll_date date default sysdate, 
+    enabled number default 1,               --활성화여부 1(활성화), 0(비활성화)
+    constraint pk_member_id primary key(id),
+    constraint ck_member_gender check(gender in ('M', 'F')),
+    constraint ck_member_enabled check(enabled in (1,0))
+);
+
+insert into spring.member values ('abcde','1234','아무개','M',to_date('88-01-25','rr-mm-dd'),'abcde@naver.com','01012345678','서울시 강남구','운동,등산,독서',default,default);
+insert into spring.member values ('qwerty','1234','김말년','F',to_date('78-02-25','rr-mm-dd'),'qwerty@naver.com','01098765432','서울시 관악구','운동,등산',default,default);
+insert into spring.member values ('admin','1234','관리자','F',to_date('90-12-25','rr-mm-dd'),'admin@naver.com','01012345678','서울시 강남구','독서',default,default);
+commit;
+
+select
+    *
+from
+    member;
+    
+update 
+    member
+set
+    password = '$2a$10$LrjcOx/0ZjEsfwBLajFgGu/Nw5/cwiiPv0jnAs0ZtGmcVbpV5rxaS'
+where
+    id = 'qwerty';
+    
+commit;
+
+
+select
+    *
+from
+    member
+where
+    id = 'honggd';
+
+-- memo테이블 생성
 create table memo(
     no number,
     memo varchar2(2000),
@@ -74,8 +88,7 @@ create sequence seq_memo_no;
 select * from memo;
 
 
-
---board테이블
+-- board테이블
 create table board(
     no number,
     title varchar2(500),
@@ -84,14 +97,12 @@ create table board(
     reg_date date default sysdate,
     read_count number default 0,
     constraint pk_board_no primary key(no),
-    constraint fk_board_member_id foreign key(member_id)
-    references member(id) on delete set null
-
+    constraint fk_board_member_id foreign key(member_id) 
+            references member(id) on delete set null
 );
 
 
-
---attachment테이블
+-- attachment테이블 
 create table attachment(
     no number,
     board_no number not null,
@@ -99,25 +110,40 @@ create table attachment(
     renamed_filename varchar2(256) not null,
     upload_date date default sysdate,
     download_count number default 0,
-    status char(1) default'Y',
+    status char(1) default 'Y',
     constraint pk_attachment_no primary key(no),
     constraint fk_attachment_board_no foreign key(board_no)
-    references board(no) on delete cascade,
-    constraint ck_attachment_status check(status in ('Y','N'))
+        references board(no) on delete cascade,
+    constraint ck_attachment_status check(status in ('Y', 'N'))
 );
 
 create sequence seq_board_no;
 create sequence seq_attachment_no;
 
+
 select * from board order by no desc;
 select * from attachment;
 
-insert into attachment
-values(seq_attachment_no.nextval, 60, 'test.jpg', '20200525_090909_123.jpg', default, default, default);
-insert into attachment
-values(seq_attachment_no.nextval, 60, 'moon.jpg', '20200525_090909_345.jpg', default, default, default);
-insert into attachment
-values(seq_attachment_no.nextval, 59, 'sun.jpg', '20200525_020425_345.jpg', default, default, default);
+insert into 
+    attachment 
+values(
+    seq_attachment_no.nextval, 60, 'test.jpg', 
+    '20200525_090909_123.jpg', default, default, default
+);
+
+insert into 
+    attachment 
+values(
+    seq_attachment_no.nextval, 60, 'moon.jpg', 
+    '20200525_090909_345.jpg', default, default, default
+);
+
+insert into 
+    attachment 
+values(
+    seq_attachment_no.nextval, 59, 'sun.jpg', 
+    '20200525_020425_345.jpg', default, default, default
+);
 
 Insert into SPRING.BOARD (NO,TITLE,MEMBER_ID,CONTENT,REG_DATE,READ_COUNT) values (SEQ_BOARD_NO.nextval,'안녕하세요, 게시판입니다 - 1','abcde','반갑습니다',to_date('18/02/10','RR/MM/DD'),0);
 Insert into SPRING.BOARD (NO,TITLE,MEMBER_ID,CONTENT,REG_DATE,READ_COUNT) values (SEQ_BOARD_NO.nextval,'안녕하세요, 게시판입니다 - 2','qwerty','안녕하세요',to_date('18/02/12','RR/MM/DD'),0);
@@ -134,6 +160,8 @@ Insert into SPRING.BOARD (NO,TITLE,MEMBER_ID,CONTENT,REG_DATE,READ_COUNT) values
 Insert into SPRING.BOARD (NO,TITLE,MEMBER_ID,CONTENT,REG_DATE,READ_COUNT) values (SEQ_BOARD_NO.nextval,'안녕하세요, 게시판입니다 - 13','abcde','반갑습니다',to_date('18/03/13','RR/MM/DD'),0);
 Insert into SPRING.BOARD (NO,TITLE,MEMBER_ID,CONTENT,REG_DATE,READ_COUNT) values (SEQ_BOARD_NO.nextval,'안녕하세요, 게시판입니다 - 14','qwerty','안녕하세',to_date('18/03/14','RR/MM/DD'),0);
 Insert into SPRING.BOARD (NO,TITLE,MEMBER_ID,CONTENT,REG_DATE,READ_COUNT) values (SEQ_BOARD_NO.nextval,'안녕하세요, 게시판입니다 - 15','admin','반갑습니다',to_date('18/03/15','RR/MM/DD'),0);
+
+
 Insert into SPRING.BOARD (NO,TITLE,MEMBER_ID,CONTENT,REG_DATE,READ_COUNT) values (SEQ_BOARD_NO.nextval,'안녕하세요, 게시판입니다 - 16','abcde','안녕하세',to_date('18/03/16','RR/MM/DD'),0);
 Insert into SPRING.BOARD (NO,TITLE,MEMBER_ID,CONTENT,REG_DATE,READ_COUNT) values (SEQ_BOARD_NO.nextval,'안녕하세요, 게시판입니다 - 17','qwerty','반갑습니다',to_date('18/03/17','RR/MM/DD'),0);
 Insert into SPRING.BOARD (NO,TITLE,MEMBER_ID,CONTENT,REG_DATE,READ_COUNT) values (SEQ_BOARD_NO.nextval,'안녕하세요, 게시판입니다 - 18','admin','안녕하세',to_date('18/03/18','RR/MM/DD'),0);
@@ -149,6 +177,7 @@ Insert into SPRING.BOARD (NO,TITLE,MEMBER_ID,CONTENT,REG_DATE,READ_COUNT) values
 Insert into SPRING.BOARD (NO,TITLE,MEMBER_ID,CONTENT,REG_DATE,READ_COUNT) values (SEQ_BOARD_NO.nextval,'안녕하세요, 게시판입니다 - 28','abcde','안녕하세',to_date('18/04/08','RR/MM/DD'),0);
 Insert into SPRING.BOARD (NO,TITLE,MEMBER_ID,CONTENT,REG_DATE,READ_COUNT) values (SEQ_BOARD_NO.nextval,'안녕하세요, 게시판입니다 - 29','qwerty','반갑습니다',to_date('18/04/09','RR/MM/DD'),0);
 Insert into SPRING.BOARD (NO,TITLE,MEMBER_ID,CONTENT,REG_DATE,READ_COUNT) values (SEQ_BOARD_NO.nextval,'안녕하세요, 게시판입니다 - 30','admin','안녕하세',to_date('18/04/10','RR/MM/DD'),0);
+
 Insert into SPRING.BOARD (NO,TITLE,MEMBER_ID,CONTENT,REG_DATE,READ_COUNT) values (SEQ_BOARD_NO.nextval,'안녕하세요, 게시판입니다 - 31','abcde','반갑습니다',to_date('18/04/16','RR/MM/DD'),0);
 Insert into SPRING.BOARD (NO,TITLE,MEMBER_ID,CONTENT,REG_DATE,READ_COUNT) values (SEQ_BOARD_NO.nextval,'안녕하세요, 게시판입니다 - 32','qwerty','안녕하세',to_date('18/04/17','RR/MM/DD'),0);
 Insert into SPRING.BOARD (NO,TITLE,MEMBER_ID,CONTENT,REG_DATE,READ_COUNT) values (SEQ_BOARD_NO.nextval,'안녕하세요, 게시판입니다 - 33','admin','반갑습니다',to_date('18/04/18','RR/MM/DD'),0);
@@ -164,6 +193,7 @@ Insert into SPRING.BOARD (NO,TITLE,MEMBER_ID,CONTENT,REG_DATE,READ_COUNT) values
 Insert into SPRING.BOARD (NO,TITLE,MEMBER_ID,CONTENT,REG_DATE,READ_COUNT) values (SEQ_BOARD_NO.nextval,'안녕하세요, 게시판입니다 - 43','abcde','반갑습니다',to_date('18/05/08','RR/MM/DD'),0);
 Insert into SPRING.BOARD (NO,TITLE,MEMBER_ID,CONTENT,REG_DATE,READ_COUNT) values (SEQ_BOARD_NO.nextval,'안녕하세요, 게시판입니다 - 44','qwerty','안녕하세',to_date('18/05/09','RR/MM/DD'),0);
 Insert into SPRING.BOARD (NO,TITLE,MEMBER_ID,CONTENT,REG_DATE,READ_COUNT) values (SEQ_BOARD_NO.nextval,'안녕하세요, 게시판입니다 - 45','admin','반갑습니다',to_date('18/05/10','RR/MM/DD'),0);
+
 Insert into SPRING.BOARD (NO,TITLE,MEMBER_ID,CONTENT,REG_DATE,READ_COUNT) values (SEQ_BOARD_NO.nextval,'안녕하세요, 게시판입니다 - 46','abcde','안녕하세',to_date('18/05/16','RR/MM/DD'),0);
 Insert into SPRING.BOARD (NO,TITLE,MEMBER_ID,CONTENT,REG_DATE,READ_COUNT) values (SEQ_BOARD_NO.nextval,'안녕하세요, 게시판입니다 - 47','qwerty','반갑습니다',to_date('18/05/17','RR/MM/DD'),0);
 Insert into SPRING.BOARD (NO,TITLE,MEMBER_ID,CONTENT,REG_DATE,READ_COUNT) values (SEQ_BOARD_NO.nextval,'안녕하세요, 게시판입니다 - 48','admin','안녕하세',to_date('18/05/18','RR/MM/DD'),0);
@@ -179,22 +209,38 @@ Insert into SPRING.BOARD (NO,TITLE,MEMBER_ID,CONTENT,REG_DATE,READ_COUNT) values
 Insert into SPRING.BOARD (NO,TITLE,MEMBER_ID,CONTENT,REG_DATE,READ_COUNT) values (SEQ_BOARD_NO.nextval,'안녕하세요, 게시판입니다 - 58','abcde','안녕하세',to_date('18/06/08','RR/MM/DD'),0);
 Insert into SPRING.BOARD (NO,TITLE,MEMBER_ID,CONTENT,REG_DATE,READ_COUNT) values (SEQ_BOARD_NO.nextval,'안녕하세요, 게시판입니다 - 59','qwerty','반갑습니다',to_date('18/06/09','RR/MM/DD'),0);
 Insert into SPRING.BOARD (NO,TITLE,MEMBER_ID,CONTENT,REG_DATE,READ_COUNT) values (SEQ_BOARD_NO.nextval,'안녕하세요, 게시판입니다 - 60','admin','안녕하세',to_date('18/06/10','RR/MM/DD'),0);
+
+
 commit;
-        
-        
-        select
-		    b.*,
-		    (select count(*) from attachment where board_no = b.no) attach_count
-		from
-		    board b
-		order by
-		    no desc;
-        
 
 
+select
+    b.*,
+    (select count(*) from attachment where board_no = b.no) attach_count			
+from 
+    board b
+order by
+    no desc;
 
 
+select * from board order by no desc;
+select * from attachment;
 
+select 
+    b.*,
+    a.no "attach_no",
+    a.board_no,
+    a.original_filename,
+    a.renamed_filename,
+    a.upload_date,
+    a.download_count,
+    a.status
+from  
+    board b
+  left join 
+    attachment a
+      on b.no = a.board_no
+where b.no = 62;
 
 
 
